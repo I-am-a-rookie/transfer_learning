@@ -10,7 +10,7 @@ from get_model import initialize_model
 from get_visualize import visualize_model
 
 
-def train_model(model, dataloaders, citerion, optimizer, filename, num_epochs=25):
+def train_model(model, dataloaders, criterion, optimizer, filename, num_epochs=25):
     # 获取起始时间
     since = time.time()
 
@@ -129,7 +129,7 @@ def get_data(batch_size):
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name', type=str, default="resnet34", help="模型")
+    parser.add_argument('--model_name', type=str, default="resnet18", help="模型")
     parser.add_argument('--num_classes', type=int, default=100, help="输出类别数")
     parser.add_argument('--feature_exact', type=bool, default=False, help="冻层, 默认为 False")
     parser.add_argument('--use_pretrained', type=bool, default=True, help="使用预训练模型")
@@ -186,7 +186,7 @@ if __name__ == "__main__":
     resnet152, val_acc_history, train_acc_history, valid_losses, train_losses, LRs = train_model(
         model=model,
         dataloaders=data_loader,
-        citerion=criterion,
+        criterion=criterion,
         optimizer=optimizer,
         num_epochs=args.num_epochs,
         filename=args.filename
