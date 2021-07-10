@@ -1,6 +1,12 @@
 import torch
 import torchvision.models as models
 
+class Model_Name_Error(Exception):
+    def __init__(self, message):
+        super(Model_Name_Error, self).__init__(message)
+        self.message = "model_name can only be: {}".format(message)
+
+
 
 def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True):
     """
@@ -13,6 +19,20 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
     """
 
     model_ft = None
+
+    # 判断输入的模型名是否在支持的模型数组内
+    try:
+        model_name_array = ["resnet18", "resnet34", "resnet50", "resnet101", "resnet152",
+                            "alexnet", "squeezenet", "vgg11", "vgg13", "vgg16", "vgg19"]
+
+        if model_name not in model_name_array:
+            raise Model_Name_Error(model_name_array)
+
+    except Model_Name_Error as e:
+        raise(e)
+
+
+
 
     if model_name == "resnet18":
         """Resnet18"""
@@ -28,7 +48,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
             torch.nn.LogSoftmax(dim=1)
         )
 
-    if model_name == "resnet34":
+    elif model_name == "resnet34":
         """ResNet34"""
 
         # 加载模型
@@ -42,7 +62,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
             torch.nn.LogSoftmax(dim=1)
         )
 
-    if model_name == "resnet50":
+    elif model_name == "resnet50":
         """ResNet50"""
 
         # 加载模型
@@ -56,7 +76,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
             torch.nn.LogSoftmax(dim=1)
         )
 
-    if model_name == "resnet101":
+    elif model_name == "resnet101":
         """ResNet101"""
 
         # 加载模型
@@ -70,7 +90,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
             torch.nn.LogSoftmax(dim=1)
         )
 
-    if model_name == "resnet152":
+    elif model_name == "resnet152":
         """ResNet152"""
 
         # 加载模型
@@ -84,7 +104,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
             torch.nn.LogSoftmax(dim=1)
         )
 
-    if model_name == "alexnet":
+    elif model_name == "alexnet":
         """AlexNet"""
 
         # 加载模型
@@ -95,7 +115,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
         num_features = model_ft.classifier[6].in_features
         model_ft.classifier[6] = torch.nn.Linear(num_features, num_classes)
 
-    if model_name == "vgg11":
+    elif model_name == "vgg11":
         """Vgg11"""
 
         # 加载模型
@@ -106,7 +126,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
         num_features = model_ft.classifier[6].in_features
         model_ft.classifier[6] = torch.nn.Linear(num_features, num_classes)
 
-    if model_name == "vgg13":
+    elif model_name == "vgg13":
         """Vgg13"""
 
         # 加载模型
@@ -117,7 +137,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
         num_features = model_ft.classifier[6].in_features
         model_ft.classifier[6] = torch.nn.Linear(num_features, num_classes)
 
-    if model_name == "vgg16":
+    elif model_name == "vgg16":
         """Vgg16"""
 
         # 加载模型
@@ -128,7 +148,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
         num_features = model_ft.classifier[6].in_features
         model_ft.classifier[6] = torch.nn.Linear(num_features, num_classes)
 
-    if model_name == "vgg19":
+    elif model_name == "vgg19":
         """Vgg19"""
 
         # 加载模型
@@ -139,7 +159,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
         num_features = model_ft.classifier[6].in_features
         model_ft.classifier[6] = torch.nn.Linear(num_features, num_classes)
 
-    if model_name == "squeezenet":
+    elif model_name == "squeezenet":
         """SqueezeNet"""
 
         # 加载模型
@@ -149,6 +169,9 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
         # 修改全连接层
         model_ft.classifier[1] = torch.nn.Conv2d(512, num_classes, kernel_size=(1, 1), stride=(1, 1))
         model_ft.num_classes = num_classes
+
+
+
 
     # 获取需要更新的参数
     parameter_ft = parameter_to_update(model=model_ft, feature_exact=feature_exact)

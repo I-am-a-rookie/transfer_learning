@@ -3,14 +3,13 @@ import argparse
 import time
 import copy
 import torch
-from torch.utils.data import DataLoader
 from torchsummary import summary
-import torchvision
 from get_model import initialize_model
-from get_visualize import visualize_model
+from get_data import get_data
+from visualize import visualize_model
 
 
-def train_model(model, dataloaders, criterion, optimizer, filename, num_epochs=25):
+def train_model(model, dataloaders, criterion, optimizer, model_save_path, num_epochs=25):
     # 获取起始时间
     since = time.time()
 
@@ -78,7 +77,9 @@ def train_model(model, dataloaders, criterion, optimizer, filename, num_epochs=2
                     "best_acc": best_acc,
                     "optimizer": optimizer.state_dict(),
                 }
-                torch.save(state, filename)
+
+                # 保存模型
+                torch.save(state, model_save_path)
             if phase == "valid":
                 val_acc_history.append(epoch_acc)
                 valid_losses.append(epoch_loss)
@@ -102,41 +103,20 @@ def train_model(model, dataloaders, criterion, optimizer, filename, num_epochs=2
     return model, val_acc_history, train_acc_history, valid_losses, train_losses, LRs
 
 
-def get_data(batch_size):
-    """获取数据"""
 
-    # 获取测试集
-    train = torchvision.datasets.CIFAR100(root="./mnt", train=True, download=True,
-                                          transform=torchvision.transforms.Compose([
-                                              torchvision.transforms.ToTensor(),  # 转换成张量
-                                              torchvision.transforms.Normalize((0.1307,), (0.3081,))  # 标准化
-                                          ]))
-    train_loader = DataLoader(train, batch_size=batch_size)  # 分割测试集
-
-    # 获取测试集
-    test = torchvision.datasets.CIFAR100(root="./mnt", train=False, download=True,
-                                         transform=torchvision.transforms.Compose([
-                                             torchvision.transforms.ToTensor(),  # 转换成张量
-                                             torchvision.transforms.Normalize((0.1307,), (0.3081,))  # 标准化
-                                         ]))
-    test_loader = DataLoader(test, batch_size=batch_size)  # 分割训练
-
-    data_loader = {"train": train_loader, "valid": test_loader}
-
-    # 返回分割好的训练集和测试集
-    return data_loader, train.classes
 
 
 def parse_opt():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, default="resnet18", help="模型")
-    parser.add_argument('--num_classes', type=int, default=100, help="输出类别数")
+    parser.add_argument('--num_classes', type=int, default=10, help="输出类别数")
     parser.add_argument('--feature_exact', type=bool, default=False, help="冻层, 默认为 False")
     parser.add_argument('--use_pretrained', type=bool, default=True, help="使用预训练模型")
     parser.add_argument('--pretrained_model_path', type=str, default="pretrained_model/", help="使用预训练模型")
+    parser.add_argument('--data_name', type=str, default="MNIST", help="数据集名称")
     parser.add_argument('--num_epochs', type=int, default=20, help="迭代次数")
     parser.add_argument('--batch_size', type=int, default=1024, help="一次训练的样本数目")
-    parser.add_argument('--filename', type=str, default="checkpoint.pth", help="模型保存")
+    parser.add_argument('--model_save_path', type=str, default="checkpoint.pth", help="模型保存")
     parser.add_argument('--visualize', type=bool, default=True, help="模型可视化")
     args = parser.parse_args()
 
@@ -168,7 +148,10 @@ if __name__ == "__main__":
     os.environ['TORCH_HOME'] = args.pretrained_model_path
 
     # 获取数据
-    data_loader, class_names = get_data(args.batch_size)
+    data_loader, class_names = get_data(
+        data_name=args.data_name,
+        batch_size=args.batch_size
+    )
     print("class names:", class_names)
 
     # 获取模型和需要更新的参数
@@ -183,13 +166,13 @@ if __name__ == "__main__":
     device, optimizer, scheduler, criterion = params_initialize(model, params_to_update)
 
     # 开始训练
-    resnet152, val_acc_history, train_acc_history, valid_losses, train_losses, LRs = train_model(
+    model, val_acc_history, train_acc_history, valid_losses, train_losses, LRs = train_model(
         model=model,
         dataloaders=data_loader,
         criterion=criterion,
         optimizer=optimizer,
         num_epochs=args.num_epochs,
-        filename=args.filename
+        model_save_path=args.model_save_path
     )
 
     # 模型可视化
