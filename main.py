@@ -9,7 +9,7 @@ from get_data import get_data
 from visualize import visualize_model
 
 
-def train_model(model, dataloaders, criterion, optimizer, model_save_path, num_epochs=25):
+def train_model(model, dataloaders, data_gray, criterion, optimizer, model_save_path, num_epochs=25):
     # 获取起始时间
     since = time.time()
 
@@ -38,6 +38,12 @@ def train_model(model, dataloaders, criterion, optimizer, model_save_path, num_e
 
             # 遍历数据
             for inputs, labels in dataloaders[phase]:
+
+                # 转换成RGB
+                if data_gray:
+                    inputs = inputs.repeat(1, 3, 1, 1)
+
+                # cuda 加速
                 inputs = inputs.to(device)
                 labels = labels.to(device)
 
@@ -103,9 +109,6 @@ def train_model(model, dataloaders, criterion, optimizer, model_save_path, num_e
     return model, val_acc_history, train_acc_history, valid_losses, train_losses, LRs
 
 
-
-
-
 def parse_opt():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, default="resnet18", help="模型")
@@ -113,7 +116,8 @@ def parse_opt():
     parser.add_argument('--feature_exact', type=bool, default=False, help="冻层, 默认为 False")
     parser.add_argument('--use_pretrained', type=bool, default=True, help="使用预训练模型")
     parser.add_argument('--pretrained_model_path', type=str, default="pretrained_model/", help="使用预训练模型")
-    parser.add_argument('--data_name', type=str, default="MNIST", help="数据集名称")
+    parser.add_argument('--data_name', type=str, default="CIFAR10", help="数据名称 MNIST | FashionMNIST | CIFAR10 | CIFAR100 | other")
+    parser.add_argument('--data_gray', type=bool, default=False, help="数据是否是单通道")
     parser.add_argument('--num_epochs', type=int, default=20, help="迭代次数")
     parser.add_argument('--batch_size', type=int, default=1024, help="一次训练的样本数目")
     parser.add_argument('--model_save_path', type=str, default="checkpoint.pth", help="模型保存")
@@ -143,6 +147,7 @@ def params_initialize(model, params_to_update):
 if __name__ == "__main__":
     # 初始化参数
     args = parse_opt()
+    print(args)
 
     # 预训练模型路径
     os.environ['TORCH_HOME'] = args.pretrained_model_path
@@ -150,6 +155,7 @@ if __name__ == "__main__":
     # 获取数据
     data_loader, class_names = get_data(
         data_name=args.data_name,
+        data_gray=args.data_gray,
         batch_size=args.batch_size
     )
     print("class names:", class_names)
@@ -169,6 +175,7 @@ if __name__ == "__main__":
     model, val_acc_history, train_acc_history, valid_losses, train_losses, LRs = train_model(
         model=model,
         dataloaders=data_loader,
+        data_gray=args.data_gray,
         criterion=criterion,
         optimizer=optimizer,
         num_epochs=args.num_epochs,
