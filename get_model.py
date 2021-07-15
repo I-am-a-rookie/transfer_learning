@@ -1,11 +1,12 @@
 import torch
 import torchvision.models as models
 
+
 class Model_Name_Error(Exception):
+
     def __init__(self, message):
         super(Model_Name_Error, self).__init__(message)
         self.message = "model_name can only be: {}".format(message)
-
 
 
 def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True):
@@ -29,10 +30,7 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
             raise Model_Name_Error(model_name_array)
 
     except Model_Name_Error as e:
-        raise(e)
-
-
-
+        raise (e)
 
     if model_name == "resnet18":
         """Resnet18"""
@@ -169,9 +167,6 @@ def initialize_model(model_name, num_classes, feature_exact, use_pretrained=True
         # 修改全连接层
         model_ft.classifier[1] = torch.nn.Conv2d(512, num_classes, kernel_size=(1, 1), stride=(1, 1))
         model_ft.num_classes = num_classes
-
-
-
 
     # 获取需要更新的参数
     parameter_ft = parameter_to_update(model=model_ft, feature_exact=feature_exact)
