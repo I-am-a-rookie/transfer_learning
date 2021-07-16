@@ -195,7 +195,7 @@ def parameter_to_update(model, feature_exact):
     :return: 需要更新的参数列表
     """
 
-    print("------------Params to learn------------/n")
+    print("------------Params to learn------------")
     param_array = model.parameters()
 
     if feature_exact:
@@ -208,6 +208,6 @@ def parameter_to_update(model, feature_exact):
         for name, param, in model.named_parameters():
             if param.requires_grad == True:
                 print("\t", name)
-    print("/n----------------------------------------")
+    print("----------------------------------------")
 
     return param_array
