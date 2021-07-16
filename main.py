@@ -15,6 +15,7 @@ def train_model(model, dataloaders, data_gray, criterion, optimizer, model_save_
 
     # checkpoint路径
     checkpoint_name = time.strftime("%Y_%m_%d_%H_%M_%S")
+    os.makedirs(model_save_path + checkpoint_name)
 
     # 初始化参数
     best_acc = 0
@@ -88,7 +89,7 @@ def train_model(model, dataloaders, data_gray, criterion, optimizer, model_save_
                 }
 
                 # 保存模型
-                torch.save(state, model_save_path + checkpoint_name + ".pth")
+                torch.save(state, model_save_path + checkpoint_name + "/checkpoint.pth")
             if phase == "valid":
                 val_acc_history.append(epoch_acc)
                 valid_losses.append(epoch_loss)
