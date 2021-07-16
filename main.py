@@ -120,8 +120,8 @@ def parse_opt():
     parser.add_argument('--num_classes', type=int, required=True, help="输出类别数")
 
     # 重要参数
-    parser.add_argument('--data_name', type=str, default="FashionMNIST", help="数据名称 MNIST | FashionMNIST | CIFAR10 | CIFAR100 | other")
-    parser.add_argument('--data_gray', type=bool, default=True, help="数据是否是单通道")
+    parser.add_argument('--data_name', type=str, default="CIFAR10", help="数据名称 MNIST | FashionMNIST | CIFAR10 | CIFAR100 | other")
+    parser.add_argument('--data_gray', type=bool, default=False, help="数据是否是单通道")
     parser.add_argument('--num_epochs', type=int, default=20, help="迭代次数")
     parser.add_argument('--batch_size', type=int, default=512, help="一次训练的样本数目")
 
