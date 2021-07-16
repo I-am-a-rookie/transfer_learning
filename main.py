@@ -13,6 +13,9 @@ def train_model(model, dataloaders, data_gray, criterion, optimizer, model_save_
     # 获取起始时间
     since = time.time()
 
+    # checkpoint路径
+    checkpoint_name = time.strftime("%Y_%m_%d_%H_%M_%S")
+
     # 初始化参数
     best_acc = 0
     val_acc_history = []
@@ -85,7 +88,7 @@ def train_model(model, dataloaders, data_gray, criterion, optimizer, model_save_
                 }
 
                 # 保存模型
-                torch.save(state, model_save_path)
+                torch.save(state, model_save_path + checkpoint_name + ".pth")
             if phase == "valid":
                 val_acc_history.append(epoch_acc)
                 valid_losses.append(epoch_loss)
@@ -111,17 +114,24 @@ def train_model(model, dataloaders, data_gray, criterion, optimizer, model_save_
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name', type=str, default="resnet18", help="模型")
-    parser.add_argument('--num_classes', type=int, default=10, help="输出类别数")
+
+    # 必选参数
+    parser.add_argument('--model_name', type=str, required=True, help="模型")
+    parser.add_argument('--num_classes', type=int, required=True, help="输出类别数")
+
+    # 重要参数
+    parser.add_argument('--data_name', type=str, default="FashionMNIST", help="数据名称 MNIST | FashionMNIST | CIFAR10 | CIFAR100 | other")
+    parser.add_argument('--data_gray', type=bool, default=True, help="数据是否是单通道")
+    parser.add_argument('--num_epochs', type=int, default=20, help="迭代次数")
+    parser.add_argument('--batch_size', type=int, default=512, help="一次训练的样本数目")
+
+    # 可选参数
     parser.add_argument('--feature_exact', type=bool, default=False, help="冻层, 默认为 False")
     parser.add_argument('--use_pretrained', type=bool, default=True, help="使用预训练模型")
     parser.add_argument('--pretrained_model_path', type=str, default="pretrained_model/", help="使用预训练模型")
-    parser.add_argument('--data_name', type=str, default="CIFAR10", help="数据名称 MNIST | FashionMNIST | CIFAR10 | CIFAR100 | other")
-    parser.add_argument('--data_gray', type=bool, default=False, help="数据是否是单通道")
-    parser.add_argument('--num_epochs', type=int, default=20, help="迭代次数")
-    parser.add_argument('--batch_size', type=int, default=1024, help="一次训练的样本数目")
-    parser.add_argument('--model_save_path', type=str, default="checkpoint.pth", help="模型保存")
+    parser.add_argument('--model_save_path', type=str, default="checkpoint/", help="模型保存")
     parser.add_argument('--visualize', type=bool, default=True, help="模型可视化")
+
     args = parser.parse_args()
 
     return args
@@ -145,6 +155,7 @@ def params_initialize(model, params_to_update):
 
 
 if __name__ == "__main__":
+
     # 初始化参数
     args = parse_opt()
     print(args)
