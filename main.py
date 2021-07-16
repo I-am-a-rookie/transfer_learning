@@ -143,7 +143,7 @@ def params_initialize(model, params_to_update):
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
     if use_cuda: model.cuda()  # GPU 计算
-    print("------------------------\n是否使用 GPU 加速:\n=======================\n", use_cuda)
+    print("------------------------\n是否使用 GPU 加速: {}\n=======================\n".format(use_cuda))
 
     # 输出网络结构
     print(summary(model, (3, 32, 32)))
