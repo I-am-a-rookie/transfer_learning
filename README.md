@@ -1,9 +1,6 @@
 # 项目详解
 ## get_data.py (获取数据)
-目前支持 MNIST, Fashion MNIST, CIFAR 10 和 CIFAR 100 数据集. 
-
-可以在```get_data.py``下自行替换成自己需要的数据集:
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210716075219573.png)
+目前支持 MNIST, Fashion MNIST, CIFAR 10 和 CIFAR 100 数据集. 可以在```get_data.py``下自行替换成自己需要的数据集.
 
 传入数据的格式为:
 ```
