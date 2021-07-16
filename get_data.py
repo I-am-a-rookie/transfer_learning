@@ -27,6 +27,7 @@ def get_data(data_name, data_gray, batch_size):
     if data_gray:
         # 转换
         pre_process = torchvision.transforms.Compose([
+            torchvision.transforms.Resize([32, 32]),  # 转换图片大小
             torchvision.transforms.ToTensor(),  # 转换成张量
             torchvision.transforms.Normalize((0.5), (0.5))  # 标准化
         ])
