@@ -130,7 +130,7 @@ def parse_opt():
     # 可选参数
     parser.add_argument('--feature_exact', type=bool, default=False, help="冻层, 默认为 False")
     parser.add_argument('--use_pretrained', type=bool, default=True, help="使用预训练模型")
-    parser.add_argument('--pretrained_model_path', type=str, default="pretrained_model/", help="使用预训练模型")
+    parser.add_argument('--pretrained_model_path', type=str, default="pretrained_model/", help="预训练权重路径")
     parser.add_argument('--model_save_path', type=str, default="checkpoint/", help="模型保存")
     parser.add_argument('--visualize', type=bool, default=True, help="模型可视化")
 
