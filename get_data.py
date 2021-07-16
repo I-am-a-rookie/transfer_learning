@@ -129,6 +129,7 @@ def get_data(data_name, data_gray, batch_size):
 
     if data_name == "other":
         """Write your own code here"""
+        """传入自己的数据集 (支持RGB以及灰度图)"""
         pass
 
     # 整合
